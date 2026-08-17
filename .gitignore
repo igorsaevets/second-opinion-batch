@@ -1,0 +1,46 @@
+# --- secrets -------------------------------------------------------------
+.env
+.env.*
+!env.example
+*.pem
+id_rsa*
+*.key
+credentials.json
+token.json
+
+# --- Claude Code local state --------------------------------------------
+.claude/settings.local.json
+
+# --- tool debris (appears unasked, carries LIVE credentials) -------------
+# See bootstrap P3a: .playwright-mcp/ has shipped Gmail session URLs with tokens.
+.playwright-mcp/
+.crawl4ai/
+.firecrawl/
+*.log
+
+# --- PRIVATE WORKSPACE: never published ----------------------------------
+# This repo is public-by-destination. Case material (I-485 / EB-1 / EB-2 NIW),
+# applicant facts, business-specific research and raw batch payloads live here
+# and are never committed. See CLAUDE.md "Publication boundary".
+private/
+runs/
+out/
+*.jsonl
+!schemas/*.jsonl
+!tests/fixtures/*.jsonl
+
+# --- python --------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# --- os ------------------------------------------------------------------
+Thumbs.db
+desktop.ini
+.DS_Store

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(secrets/**)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/id_rsa*)",
+      "Read(**/credentials.json)",
+      "Read(**/token.json)",
+      "Read(.playwright-mcp/**)"
+    ],
+    "ask": [
+      "Bash(git push*)",
+      "Bash(git -C * push*)",
+      "PowerShell(git push*)",
+      "Bash(gh repo create*)",
+      "Bash(gh api -X PUT*)",
+      "Bash(gh api -X PATCH*)",
+      "Bash(gh api -X DELETE*)",
+      "Bash(rm -rf*)",
+      "PowerShell(Remove-Item -Recurse*)",
+      "Bash(curl*api.openai.com*)",
+      "Bash(curl*api.anthropic.com*)",
+      "Bash(curl*openrouter.ai*)",
+      "Bash(curl*generativelanguage.googleapis.com*)",
+      "PowerShell(*Invoke-RestMethod*openrouter.ai*)",
+      "PowerShell(*Invoke-RestMethod*api.openai.com*)",
+      "PowerShell(*Invoke-RestMethod*api.anthropic.com*)",
+      "PowerShell(*Invoke-RestMethod*generativelanguage.googleapis.com*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File .claude/hooks/session-anchor.ps1",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
