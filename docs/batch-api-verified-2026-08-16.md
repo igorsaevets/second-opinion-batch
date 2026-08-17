@@ -158,6 +158,45 @@ Do not plan on it until then.
 
 ---
 
+## 4a. 🔴 The finding that reframes the project: on Google, Flex costs the same as Batch
+
+`ai.google.dev/gemini-api/docs/flex-inference`, Google's own comparison table, verbatim:
+
+| Feature | Flex | Priority | Standard | Batch |
+|---|---|---|---|---|
+| **Pricing** | **50% discount** | 75–100% more than Standard | Full price | **50% discount** |
+| **Latency** | **Minutes (1–15 min target)** | Low (Seconds) | Seconds to minutes | **Up to 24 hours** |
+| **Reliability** | Best-effort (Sheddable) | High (Non-sheddable) | High / Medium-high | High (for throughput) |
+| **Interface** | **Synchronous** | Synchronous | Synchronous | **Asynchronous** |
+
+And in prose: "Flex inference is priced at **50% of the standard API**"; it is "Ideal for sequential
+API chains where the next request depends on the output of the previous one, **making it more
+flexible than Batch for agentic workflows**."
+
+**So the 50% discount — the entire economic premise of both source documents — is not exclusive to
+Batch.** Flex has the identical discount, returns in 1–15 minutes instead of up to 24 hours, is
+synchronous, and supports the sequential chains that Batch structurally cannot.
+
+What Batch still buys you over Flex, per the same page — and it is exactly two things:
+
+1. **Extended rate limits.** "Flex inference traffic counts towards your general rate limits;
+   **it doesn't offer extended rate limits like the Batch API.**" This is the real reason to
+   batch: escaping TPM/RPM ceilings on genuinely large volume.
+2. **Guaranteed completion.** Flex is "sheddable" — preempted under load, returning 503/429, with
+   **no server-side fallback** ("To prevent unexpected charges, the system won't automatically
+   upgrade a Flex request to the Standard tier") and client-side retry with backoff required.
+   Batch is "High (for throughput)".
+
+**The corrected decision rule.** Price is not the axis; it is 50% either way on Google.
+- Volume comfortably inside the rate limit, and the work is sequential or needs iteration →
+  **Flex**. Same price, minutes not days.
+- Volume that would hit `429`, or genuinely fire-and-forget overnight bulk → **Batch**.
+- Needed in seconds → Standard (or Priority, which costs *more*).
+
+Both source documents treat "50% off" as synonymous with "Batch". The original note never mentions
+Flex; the ChatGPT critique mentions it once, buried as item 3 in a list of "grey ways to save".
+It is not a footnote — for most of the workloads these documents propose, **it is the answer**.
+
 ## 5. What this means for the lane plan
 
 Two of the four lanes have **no API key on this machine** (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`
