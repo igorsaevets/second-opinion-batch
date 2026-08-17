@@ -88,6 +88,31 @@ discounted); later batches read at the halved read rate while the entry stays wa
 So the correct design is **prefix-warm → many sequential batches**, not one big batch. Treat cache
 saving as an upside read off `cached_tokens` after the run, never as a budget input.
 
+### 3a. Stacking is per-vendor, and Google appears not to stack
+
+Anthropic states plainly that the two discounts "can stack". **Google's own batch page does not
+say that, and its wording points the other way**, verbatim:
+
+> "**Caching:** Context caching is supported for batch requests. Reuse cached content by
+> specifying the `cached_content` resource name in the configuration of individual requests
+> within your batch. **If a request in your batch results in a cache hit, you pay the standard
+> context caching rates.**"
+
+*Standard* caching rates — not half of them. Read literally, a cache hit on Google's native Batch
+API is billed at the ordinary cache price with no batch discount applied to that line.
+
+🟡 **And this is where the reseller diverges from the vendor — a testable arbitrage, not yet a
+saving.** OpenRouter's catalogue halves `input_cache_read` on the `:batch` variant
+($0.0375 → $0.01875 /M, §2), which is the opposite of what Google's prose describes for its own
+API. If both hold as written, a **cache-heavy** Gemini workload could be cheaper through
+OpenRouter `:batch` than through Google direct, which inverts the usual assumption that the
+direct vendor key is the cheaper path.
+
+Status: **hypothesis.** It compares OpenRouter's published price rows against Google's prose, and
+those are two different billing systems described in two different registers. Settle it the only
+way that counts — run the same cache-heavy batch on both lanes and diff the returned cost meters.
+Do not plan on it until then.
+
 ---
 
 ## 4. Constraints that decide the architecture, none of which are in either source document
