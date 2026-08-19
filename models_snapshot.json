@@ -1,0 +1,161 @@
+{
+  "_rule": "No slug, endpoint, price or limit enters the harness except from this file. A price copied from prose is a hypothesis; a price here carries the date it was captured and the URL it came from. Prices rot - re-capture before trusting one older than a few weeks.",
+  "_captured": "2026-08-18",
+  "_source": "https://ai.google.dev/gemini-api/docs/pricing read via jina read_url on 2026-08-18; https://ai.google.dev/api/caching for the cachedContents REST surface; https://ai.google.dev/gemini-api/docs/batch-api for the 50% batch statement",
+
+  "google_direct": {
+    "endpoint_base": "https://generativelanguage.googleapis.com/v1beta",
+    "auth_header": "x-goog-api-key",
+    "env_var": "GEMINI_API_KEY",
+    "_cost_meter": "NONE in the API. Google returns token counts and no cost field. Every dollar figure on this lane is ARITHMETIC against the table below, and must be labelled as such. Validated 2026-08-18 against OpenRouter's real meter on an identical 12-item shape: arithmetic $0.286123 vs metered $0.287121, 0.35% apart.",
+
+    "🔴_SPEND_CAP": {
+      "_status_2026_08_19": "THE $30 CAP IS NO LONGER SET. Re-checked in AI Studio -> Spend on 2026-08-19: the cap block shows NO value, NO progress bar and NO warning banner — only a button reading 'Set spend cap'. On 2026-08-18 the same block read '$23.60 / $30.00' with 'You're approaching the spend cap amount.' The button was NOT clicked: changing a billing setting is the account owner's decision, not the agent's.",
+      "_read_this_the_right_way": "Removing the cap did not make the lane safer — it removed the only EXTERNAL brake on irreversible batch spend. The call-plan ceiling is now the sole control. Still re-check this page before any large run: a cap can be re-set at any time and nothing in the API surfaces it.",
+      "spend_month_to_date_usd": 24.68,
+      "_spend_trend": "$23.60 on 2026-08-18 -> $24.68 on 2026-08-19, i.e. ~$1.08 for the day, consistent with ~$1.01 of arithmetic for that day's Google runs plus the owner's own traffic.",
+      "resets": "first day of each month, PST",
+      "_cap_latency": "When a cap IS set, AI Studio warns 'Overages may occur during ~10 minute latency', so the counter lags and the cap can be overshot.",
+      "_SUPERSEDED_2026_08_18_reading": "cap 30.00, used 23.60, 79% consumed with 13 days left, treated as a hard stop that could kill a batch mid-run. True when observed; no longer the state of the account."
+    },
+
+    "_MEASURED_LIMITS_2026_08_19": {
+      "_source": "GET /v1beta/models/gemini-3.7-flash on a dated run — not copied from prose",
+      "inputTokenLimit": 1048576,
+      "outputTokenLimit": 65536,
+      "model_version_string": "3.7-flash-08-2026",
+      "supportedGenerationMethods": ["generateContent", "countTokens", "createCachedContent", "batchGenerateContent"],
+      "_why_it_matters": "createCachedContent and batchGenerateContent appear on the SAME model, which is the capability-level confirmation of the composition measured empirically on 2026-08-18.",
+      "_countTokens_is_free": "POST /v1beta/models/{m}:countTokens. Use it as the pre-submit gate; a chars/3.5 estimate was measured wrong by up to 1.9x on real case material.",
+      "chars_per_token_MEASURED": {
+        "_note": "Cyrillic is NOT the dense case — that intuition was wrong. Structured exhibit tables and OCR output are.",
+        "ocr_evidence_text": 2.35,
+        "exhibit_master_list_tables": 2.37,
+        "review_report_ru": 2.47,
+        "pdf_form_with_widgets": 2.95,
+        "english_legal_memo": 3.42,
+        "third_party_exhibit_pdf": 3.69,
+        "russian_petition_md": 4.47
+      }
+    },
+
+    "_PDF_EXTRACTION_TRAP": {
+      "_measured": "2026-08-19 with PyMuPDF over the case Forms directory",
+      "_finding": "page.get_text() returns the BLANK TEMPLATE of a PDF form, never the values typed into it. i-485 (4).pdf holds 458 filled AcroForm widgets and i-140 holds 84; none appear in the text layer.",
+      "_consequence": "A corpus built from the text layer alone shows a reviewing model an EMPTY form and invites 'Part 3 left blank' as a fatal finding — a false positive manufactured by the pipeline, not a defect in the filing.",
+      "_fix": "Iterate page.widgets(), skip field_value in (None, '', False, 'Off'), skip BarCode/PDF417 fields as machine-encoded duplicates, and label the block so a form value is never mistaken for a sentence in a brief. 758 values recovered across 20 form files."
+    },
+
+    "_billing_console_verification": {
+      "_status": "Console opened 2026-08-18. It CANNOT confirm a same-day run.",
+      "_lag": "AI Studio Spend says 'Cost information may take up to 24 hours to update'; the usage page says 15 minutes for token counts. GCP billing reports lagged similarly: ~5M of gemini-3.7-flash input tokens run this day showed as only 21,451 in the Aug-18 SKU report.",
+      "_near_miss": "That 200x gap looked like proof the API key was on a different project. It was not — it was the documented lag. The Spend page's faster counter ($23.60) sat ~$1.89 above the settled billing figure ($21.71), which is the right order of magnitude for the day's unsettled usage. Do not conclude 'wrong project' from a same-day gap.",
+      "_tier": "The project reports 'Tier 1' in AI Studio, i.e. a PAID tier. This matters for data handling: the vendor pricing page states free tier content IS used to improve their products and paid tier content is NOT. Paid tier is therefore confirmed, not assumed.",
+      "_sku_taxonomy_CONFIRMED": {
+        "_finding": "Input, output and CACHED INPUT are separate billing lines per model. This confirms the caching design assumption directly.",
+        "gemini_3_7_flash_input": "01FB-5D61-EA5A  'Generate content input token count gemini 3.7 flash text'",
+        "gemini_3_7_flash_output": "2156-A528-227F  'Generate content output token count gemini 3.7 flash text'",
+        "gemini_3_7_flash_cached_input": "43CF-1C24-D5F0  'Generate content cached input token count gemini 3.7 flash text'"
+      },
+      "_NOT_established": [
+        "No SKU with 'batch' in its name was visible in the lists inspected. That is suggestive that batch may bill on the same SKUs at a reduced rate rather than on its own line, but the day's batch traffic had not settled, so this is NOT a finding.",
+        "The count-to-cost ratio did not reconcile with the published per-token price: Aug 17 showed 630,278 input 'count' at $0.47, roughly 2x the $0.375/M rate. The unit semantics of 'count' on these SKUs are unresolved. Do not derive a rate from the console until this is understood.",
+        "Whether the cached rate stacks with the batch 50% discount remains open."
+      ]
+    },
+
+    "models": {
+      "gemini-3.7-flash": {
+        "_verified_by": "returned 200 on smoke, T1, T2, ablation and cache probe, 2026-08-18",
+        "context_window_tokens_observed": 228240,
+        "_context_note": "228,240 is the largest input MEASURED through this project, not the model ceiling. A canary planted at 36.7% depth of that payload was recovered, so the middle is genuinely read at that size.",
+        "thinking_budget_max": 24576,
+
+        "price_per_1m_usd": {
+          "_valid_through": "2026-12-31",
+          "_note": "The table lists a second set of prices that take effect 2027-01-01 and are roughly DOUBLE. Re-capture before any run in 2027.",
+          "input_standard": 0.375,
+          "output_standard_incl_thinking": 1.875,
+          "input_batch": 0.1875,
+          "output_batch_incl_thinking": 0.9375,
+          "input_flex": 0.1875,
+          "output_flex_incl_thinking": 0.9375,
+          "cached_input": 0.0375,
+          "cache_storage_per_1m_tokens_per_hour": 0.50
+        },
+
+        "price_per_1m_usd_from_2027_01_01": {
+          "input_standard": 0.75,
+          "output_standard_incl_thinking": 3.75,
+          "cached_input": 0.075,
+          "cache_storage_per_1m_tokens_per_hour": 1.00
+        }
+      }
+    },
+
+    "tiers": {
+      "_the_axis": "Price is NOT the axis. Batch and Flex carry the IDENTICAL 50% discount. The choice is sheddable-and-fast versus guaranteed-and-slower.",
+      "standard": {"discount": 0.0, "sync": true},
+      "flex": {
+        "discount": 0.50, "sync": true, "target": "1-15 min",
+        "sheddable": true,
+        "_measured": "2026-08-18 R06: 2 of 12 items shed HTTP 503 and a whole single-item job died after 7 retries. Needs backoff+jitter and a fallback lane."
+      },
+      "batch": {
+        "discount": 0.50, "sync": false, "target": "24 h",
+        "sheddable": false,
+        "_measured": "2026-08-18 R07: 1 item 75 s, 12 items ~4.5 min, 4 heavy items ~2.5 min. The 24 h figure is a CEILING, not a latency. Zero 503 across 4 runs. 12/12 and 4/4 valid JSON.",
+        "endpoint": "POST /v1beta/models/{model}:batchGenerateContent",
+        "poll": "GET /v1beta/batches/{id}",
+        "_state_names": "BATCH_STATE_RUNNING / BATCH_STATE_SUCCEEDED. NOT the JOB_STATE_* the docs summary gives - measured 2026-08-18.",
+        "_results_path": "response.inlinedResponses.inlinedResponses (DOUBLE nested)",
+        "inline_payload_cap_bytes": 20971520,
+        "input_file_cap_bytes": 2147483648,
+        "job_expiry_hours": 48
+      }
+    },
+
+    "context_caching": {
+      "_status": "EXPLICIT caching VERIFIED WORKING 2026-08-18, and it COMPOSES WITH BATCH.",
+      "_supersedes": "The project's earlier rule 'a shared prefix buys nothing inside a batch' was measured on IMPLICIT caching and remains true for implicit. Explicit caching is a different mechanism and does work.",
+      "create": "POST /v1beta/cachedContents",
+      "get": "GET /v1beta/cachedContents/{id}",
+      "list": "GET /v1beta/cachedContents",
+      "delete": "DELETE /v1beta/cachedContents/{id}",
+      "reference_field": "cachedContent",
+      "_reference_field_note": "Top-level on GenerateContentRequest, value 'cachedContents/{id}'. Works BOTH on :generateContent and inside a batch item's `request` object. Verified by a returned cachedContentTokenCount, not by an HTTP 200.",
+      "usage_field": "usageMetadata.cachedContentTokenCount",
+      "min_tokens_gemini_3_7_flash": 4096,
+      "required_create_fields": ["model as 'models/{slug}'"],
+      "expiration": "ttl like '600s', or expireTime RFC3339",
+      "_measured_2026_08_18": {
+        "corpus_chars": 328469,
+        "cached_tokens": 93442,
+        "prompt_tokens_per_call": 93750,
+        "cache_hit_fraction": 0.9967,
+        "create_wall_s": 1.0,
+        "sync_call_wall_s": 10.93,
+        "batch_2_items": "both items returned cachedContentTokenCount 93442",
+        "fidelity": "cached-prefix output reproduced the same fatal finding as the inline-prefix run on the same lens"
+      },
+      "_the_trap": "Storage bills $0.50 per 1M tokens PER HOUR. A 93,442-token cache costs $0.0467/hour to hold - leave one up for a day and it costs more than the batch it was meant to cheapen. CREATE, USE, DELETE. Always delete in a finally block; the TTL is only a backstop for when the delete itself fails.",
+      "_unverifiable_from_here": "Whether the cached rate STACKS with the batch 50% discount is NOT determinable from this side, because Google returns no cost field. Cached input is $0.0375/M against batch input $0.1875/M either way, so the saving is real; only its exact size is open. Confirm in the Google billing console."
+    }
+  },
+
+  "openrouter": {
+    "endpoint_batches": "https://openrouter.ai/api/beta/batches",
+    "endpoint_field": "/v1/chat/completions",
+    "_endpoint_note": "NOT /api/v1/... inside the `endpoint` field - that 400s.",
+    "env_var": "OPENROUTER_API_KEY",
+    "_cost_meter": "REAL. `usage.cost` on the batch poll. This is the only lane in the project with a genuine meter.",
+    "models": {
+      "google/gemini-3.7-flash:batch": {
+        "_verified_by": "R04, R05, R07 all returned 200 and billed",
+        "_measured_2026_08_18": "12 items, 1,125,133 in / 81,236 out, metered $0.287121",
+        "_json_defect": "8.3% of items return invalid JSON (a lone backslash before a non-escape). Measured in R04 and again in R07 - same failure, different corpus. tools/salvage_json.py recovers 12/12 via escape-lone-backslash. Wire it in as routine, not as rescue.",
+        "_retention": "OpenRouter keeps batch JSONL in GCS for 30 days regardless of ZDR. `provider.zdr: true` forces Vertex (zero retention) over AI Studio (55 days) for the inference itself."
+      }
+    }
+  }
+}

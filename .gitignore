@@ -25,6 +25,23 @@ token.json
 private/
 runs/
 out/
+# reviews/ added 2026-08-18: `git status` showed it untracked but NOT ignored
+# while it held 320 KB of external-panel output quoting the applicant's filing
+# posture. One `git add -A` would have published it.
+# Under-publish rather than over-publish — a push is irreversible. Opt a
+# specific methodology review back in with `git add -f` if one is ever meant to ship.
+reviews/
+
+# .claude/state/ added 2026-08-19, and the reason is structural rather than
+# incidental. NOW.md and history/ exist to record what a round FOUND, and what a
+# round finds is by construction material about a live case: names of people who
+# never consented to appear here, filing dates, adverse-notice history. A literal
+# audit on 2026-08-19 caught third-party surnames written into a TRACKED NOW.md
+# during the very session that wrote the rule forbidding it.
+# Sanitising this family every session is discipline; ignoring it is structure, and
+# structure is what survives a bad day. Methodology genuinely meant to ship belongs
+# in docs/ as a written-for-publication document, not as leaked session state.
+.claude/state/
 *.jsonl
 !schemas/*.jsonl
 !tests/fixtures/*.jsonl
